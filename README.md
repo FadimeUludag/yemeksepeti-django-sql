@@ -1,159 +1,169 @@
-YEMEKSEPETİ SİPARİŞ SİSTEMİ
-Veritabanı Projesi
+# Yemeksepeti Sipariş Sistemi
 
-1. PROJE HAKKINDA GENEL BİLGİ
+## Proje Hakkında
 
-Bu proje, kullanıcıların restoranları görüntüleyebildiği, sepete ürün ekleyebildiği ve yemekleri online olarak sipariş verebildiği; firmaların gelen siparişleri onaylayabildiği, sipariş durumlarını güncelleyebildiği ve yapılan yorumları görüntüleyebildiği; adminlerin ise tüm sistemi kontrol edebildiği web tabanlı bir uygulamadır.
+Bu proje, kullanıcıların restoranları görüntüleyebildiği, sepete ürün ekleyebildiği ve online sipariş verebildiği; firmaların gelen siparişleri yönetebildiği ve yorumları görüntüleyebildiği; yöneticilerin ise sistemi kontrol edebildiği web tabanlı bir uygulamadır.
 
-Proje, Microsoft SQL Server üzerinde oluşturulan bir veritabanı ve
-Django framework kullanılarak geliştirilen bir web uygulamasından
-oluşmaktadır.
+Proje, **Microsoft SQL Server** üzerinde oluşturulan bir veritabanı ve **Django** framework'ü kullanılarak geliştirilen bir web uygulamasından oluşmaktadır.
 
-Sipariş toplam tutarı, yorum kontrolleri ve bazı iş kuralları
-veritabanı tarafında (trigger ve stored procedure) sağlanmaktadır.
+Sipariş toplam tutarı hesaplama, yorum kontrolü ve çeşitli iş kuralları veritabanı tarafında **Stored Procedure** ve **Trigger** yapıları kullanılarak gerçekleştirilmiştir.
 
+---
 
-2. GEREKLİ KURULUMLAR
+## Kullanılan Teknolojiler
 
-- Python 3.x
-- Django
-- Microsoft SQL Server
-- SQL Server Management Studio (SSMS)
-- pyodbc(SQL Server bağlantısı için)
-- HTML / CSS (Bootstrap kullanılmıştır)
-- JavaScript (sepette adet artırma/azaltma gibi basit işlemler için)
-- Visual Studio Code (kod editörü olarak kullanılmıştır)
+* Python
+* Django
+* Microsoft SQL Server (MSSQL)
+* SQL Server Management Studio (SSMS)
+* pyodbc
+* HTML
+* CSS (Bootstrap)
+* JavaScript
+* Visual Studio Code
 
+---
 
-3. PROJE KLASÖR YAPISI
+## Proje Özellikleri
 
-Projede iki ana bölüm bulunmaktadır:
+### Müşteri
 
-1) Veritabanı dosyaları
-   - Tablolar (CREATE TABLE)
-   - Stored Procedure (SP)
-   - Trigger (TRG)
-   - Function
-   - View
-   - Test verileri ve rol atama örnekleri
+* Kullanıcı kayıt ve giriş sistemi
+* Restoran listeleme
+* Menü görüntüleme
+* Sepete ürün ekleme ve çıkarma
+* Sipariş oluşturma
+* Sipariş geçmişini görüntüleme
+* Sipariş sonrası yorum yapabilme
 
-2) Django Web Uygulaması
-   - views.py
-   - urls.py
-   - templates klasörü (HTML dosyaları)
-   - static klasörü (CSS / görseller)
+### Firma
 
+* Gelen siparişleri görüntüleme
+* Sipariş durumlarını güncelleme
+* Restoran yorumlarını görüntüleme
 
+### Admin
 
+* Sistem yönetimi
+* Kullanıcı ve firma işlemlerini kontrol etme
 
+---
 
-4. VERİTABANI KURULUMU
+## Proje Yapısı
 
-4.1 Bilgisayarda Microsoft SQL Server ve
-    SQL Server Management Studio (SSMS) kurulu olmalıdır.
-4.2 SQL Server Management Studio (SSMS) açılır.
-4.3 Microsoft SQL Server üzerinde "YemeksepetiDb" adlı veritabanı oluşturulur.
+### Veritabanı Bölümü
 
-4.4 Proje klasörü içinde bulunan SQL dosyaları
-   çalıştırılarak:
+* Tablolar (CREATE TABLE)
+* Stored Procedures
+* Triggers
+* Functions
+* Views
+* Test Verileri
+* Rol Atama Örnekleri
 
-   1) 01_Tables.sql
-   2) 02_StoredProcedures.sql
-   3) 03_Triggers.sql
-   4) 04_Functions.sql
-   5) 05_Views.sql
-   6) 06_TestData.sql
-   7) 07RolAtamaOrnekleri.sql
+### Django Uygulaması
 
-   SQL Server üzerine eklenir.
+* Views
+* URL Yapıları
+* Templates
+* Static Dosyalar
+* Kullanıcı Yönetimi
+* Sipariş Sistemi
 
-4.5 Veritabanı bağlantısı, Django projesinde pyodbc kullanılarak SQL Server’a    bağlanacak şekilde ayarlanmıştır.
+---
 
+## Veritabanı Kurulumu
 
-5. DJANGO UYGULAMASINI ÇALIŞTIRMA
+1. Microsoft SQL Server ve SQL Server Management Studio (SSMS) kurulur.
+2. `YemeksepetiDb` isimli veritabanı oluşturulur.
+3. Aşağıdaki SQL dosyaları sırasıyla çalıştırılır:
 
-Proje sanal ortam (venv) kullanılarak geliştirilmiştir.
-Sanal ortam kullanılması önerilir.
+```sql
+01_Tables.sql
+02_StoredProcedures.sql
+03_Triggers.sql
+04_Functions.sql
+05_Views.sql
+06_TestData.sql
+07RolAtamaOrnekleri.sql
+```
 
-5.1 SANAL ORTAM KULLANARAK ÇALIŞTIRMA 
+4. Django uygulaması, `pyodbc` kullanılarak SQL Server'a bağlanacak şekilde yapılandırılmıştır.
 
-5.1.1 Proje klasörüne girilir.
-5.1.2 Sanal ortam oluşturulur:
+---
 
-   python -m venv venv
+## Uygulamayı Çalıştırma
 
-5.1.3 Sanal ortam aktif edilir:
+### Sanal Ortam Oluşturma
 
-   Windows:
-   venv\Scripts\activate
+```bash
+python -m venv venv
+```
 
-5.1.4 Gerekli paketler kurulur:
+### Sanal Ortamı Aktifleştirme
 
-   pip install django pyodbc
+```bash
+venv\Scripts\activate
+```
 
-5.1.5 Django sunucusu başlatılır:
+### Gerekli Paketleri Kurma
 
-   python manage.py runserver
+```bash
+pip install -r requirements.txt
+```
 
-Django sunucusu çalıştırıldıktan sonra uygulamaya tarayıcıdan
-aşağıdaki adresler üzerinden erişilebilir.
+### Sunucuyu Başlatma
 
-Ana Sayfa (Restoran Listesi):
+```bash
+python manage.py runserver
+```
+
+---
+
+## Erişim Adresleri
+
+Ana Sayfa:
+
+```text
 http://127.0.0.1:8000/
+```
 
 Giriş Sayfası:
+
+```text
 http://127.0.0.1:8000/login/
+```
 
 Kayıt Sayfası:
+
+```text
 http://127.0.0.1:8000/register/
+```
 
+---
 
-Not:
-Admin ve firma panellerine erişim, kullanıcı rolüne göre
-kontrol edilmektedir. Yetkisi olmayan kullanıcılar
-bu sayfalara erişemez.
+## Kullanıcı Rolleri
 
+Sistemde üç farklı rol bulunmaktadır:
 
-6. UYGULAMAYA GİRİŞ VE ROLLER
-
-Sistemde 3 farklı rol bulunmaktadır:
-
-- Admin (Rol = 1)
-- Firma (Rol = 2)
-- Müşteri (Rol = 3)
-
-Projeyi kolayca inceleyebilmek için örnek admin ve firma
-hesapları test verileri ile birlikte oluşturulmuştur.
-
-Admin Giriş Bilgileri:
-E-posta : fadime@gmail.com
-Şifre   : fadime
-
-Firma Giriş Bilgileri:
-E-posta : ates@gmail.com
-Şifre   : ateşsu
+* Admin
+* Firma
+* Müşteri
 
 Müşteri kullanıcıları sistem üzerinden kayıt olabilir.
 
-Not:
-Kolay test edebilmek için tüm restoranlar tek bir firmaya atanmıştır.
-isteğe bağlı olarak her bir restoran farklı firmalara atanabilir.
+---
 
+## Veritabanı Kuralları
 
-7. ÖNEMLİ NOTLAR
+* Sipariş toplam tutarı trigger'lar ile otomatik hesaplanır.
+* Sipariş teslim edilmeden yorum yapılamaz.
+* Aynı sipariş için birden fazla aktif yorum oluşturulamaz.
+* Sipariş verildiğinde ürünler ilgili sipariş tablolarına aktarılır.
+* İş kurallarının önemli bir kısmı veritabanı seviyesinde uygulanmaktadır.
 
-- Sipariş toplam tutarı, veritabanındaki trigger’lar ile otomatik hesaplanmaktadır.
-- Bir sipariş teslim edilmeden yorum yapılamaz.
-- Aynı sipariş için birden fazla aktif yorum eklenemez.
-- Sipariş verildiğinde ürünler sipariş tablolarına aktarılır.
-- Bu kontroller trigger ve stored procedure seviyesinde sağlanmıştır.
-- Django tarafı bu veritabanı kurallarına göre çalışmaktadır.
+---
 
+## Not
 
-
-
-
-
-
-
-
+Bu proje, Veritabanı Yönetim Sistemleri dersi kapsamında geliştirilmiş olup Django ve MSSQL entegrasyonu kullanılarak hazırlanmıştır.
