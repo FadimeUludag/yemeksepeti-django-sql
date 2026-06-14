@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Yorum Yap{% endblock %}
+
+{% block content %}
+
+<!-- sipariş için yorum ekleme ekranı -->
+<h3 class="mb-4">Yorum Yap</h3>
+
+<!-- yorum formu -->
+<form method="post">
+    {% csrf_token %}
+
+    <!-- puan seçimi (1–5 arası) -->
+    <div class="mb-3">
+        <label class="form-label">Puan</label>
+        <select name="puan" class="form-select" required>
+            <option value="">Seçiniz</option>
+            {% for i in "12345" %}
+            <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- yorum metni -->
+    <div class="mb-3">
+        <label class="form-label">Yorum</label>
+        <textarea name="yorum" class="form-control" rows="4" required></textarea>
+    </div>
+
+    <!-- form gönder -->
+    <button type="submit" class="btn btn-success">
+        Yorumu Gönder
+    </button>
+</form>
+{% endblock %}

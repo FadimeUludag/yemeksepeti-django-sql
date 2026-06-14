@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Siparişlerim{% endblock %}
+
+{% block content %}
+
+<!-- kullanıcının geçmiş siparişleri -->
+<h3 class="mb-4">Siparişlerim</h3>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+
+        <!-- sipariş listesi -->
+        <table class="table table-bordered m-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Restoran</th>
+                    <th>Tutar</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in siparisler %}
+                <tr>
+                    <!-- sipariş numarası -->
+                    <td>{{ s.0 }}</td>
+
+                    <!-- restoran adı -->
+                    <td>{{ s.1 }}</td>
+
+                    <!-- toplam tutar -->
+                    <td>{{ s.2 }} ₺</td>
+
+                    <!-- sipariş durumu -->
+                    <td>
+                        <span class="badge
+                            {% if s.3 == 'Hazırlanıyor' %}
+                                bg-warning text-dark
+                            {% elif s.3 == 'Onaylandı' %}
+                                bg-primary
+                            {% elif s.3 == 'Yolda' %}
+                                bg-info
+                            {% elif s.3 == 'Teslim Edildi' %}
+                                bg-success
+                            {% elif s.3 == 'İptal' %}
+                                bg-danger
+                            {% else %}
+                                bg-secondary
+                            {% endif %}
+                        ">
+                            {{ s.3 }}
+                        </span>
+                    </td>
+
+                    <!-- sipariş tarihi -->
+                    <td>{{ s.4|date:"d.m.Y H:i" }}</td>
+
+                    <!-- sadece teslim edilen siparişe yorum yapılabilir -->
+                    <td>
+                        {% if s.3 == "Teslim Edildi" %}
+                        <a href="{% url 'yorum_yap' s.0 %}" class="btn btn-sm btn-outline-success">
+                            Yorum Yap
+                        </a>
+                        {% else %}
+                        <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <!-- hiç sipariş yoksa -->
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Henüz siparişiniz yok.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

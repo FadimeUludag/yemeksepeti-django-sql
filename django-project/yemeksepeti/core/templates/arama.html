@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Arama Sonuçları{% endblock %}
+
+{% block content %}
+
+<!-- Kullanıcının girdiği arama kelimesine göre sonuçları gösteren başlık -->
+<h3 class="mb-4">
+    "{{ q }}" için arama sonuçları
+</h3>
+
+<!-- Arama sonucu bulunan yemeklerin listelendiği tablo -->
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Yemek</th>
+            <th>Restoran</th>
+            <th>Kategori</th>
+            <th>Fiyat</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <!-- Arama sonucunda bulunan her yemek için -->
+        {% for y in sonuclar %}
+        <tr>
+            <!-- Yemek adı -->
+            <td>{{ y.1 }}</td>
+
+            <!-- Restoran adı -->
+            <td>{{ y.3 }}</td>
+
+            <!-- Yemek fiyatı -->
+            <td>{{ y.5 }} ₺</td>
+
+            <!-- Kategori ve yorumlar bağlantısı -->
+            <td>
+                {{ y.2 }} <br>
+                <a href="{% url 'restoran_yorumlari' y.4 %}" class="small text-primary">
+                    Yorumlar
+                </a>
+            </td>
+
+            <!-- Sepete ekleme işlemi -->
+            <td>
+                <form method="post" action="{% url 'sepete_ekle' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="yemek_id" value="{{ y.0 }}">
+                    <button class="btn btn-sm btn-success">
+                        Sepete Ekle
+                    </button>
+                </form>
+            </td>
+
+            <!-- Restoranın ortalama puanı ve yorum sayısı -->
+            <td>
+                <span class="badge bg-warning text-dark">
+                    ⭐ {{ y.6|default:"0.0" }}
+                </span>
+                <small class="text-muted">
+                    ({{ y.7 }} yorum)
+                </small>
+            </td>
+
+        </tr>
+        <!-- Arama sonucu bulunamazsa bilgi versin diye-->
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">
+                Sonuç bulunamadı.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

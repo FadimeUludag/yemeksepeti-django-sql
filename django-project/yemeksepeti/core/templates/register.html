@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+
+{% block title %}Kayıt Ol - YemekSepeti{% endblock %}
+
+{% block extra_css %}
+<!-- kayıt sayfasına özel stiller -->
+<style>
+    .register-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 15px;
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .register-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .register-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .register-subtitle {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-label i {
+        color: #ff6b6b;
+        margin-right: 3px;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #ff6b6b;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.15);
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+        color: #666;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: #ff6b6b;
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: white;
+        width: 100%;
+        margin-top: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        background: linear-gradient(135deg, #ff5252 0%, #ff6b6b 100%);
+    }
+
+    .btn-register:active {
+        transform: translateY(0);
+    }
+
+    .form-check {
+        margin: 20px 0;
+    }
+
+    .form-check-label {
+        color: #666;
+        font-size: 0.9rem;
+        cursor: pointer;
+        line-height: 1.5;
+    }
+
+    .form-check-label a {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .form-check-label a:hover {
+        text-decoration: underline;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .login-link p {
+        color: #666;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .login-link a {
+        color: #ff6b6b;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+
+    .login-link a:hover {
+        color: #ff5252;
+        text-decoration: underline;
+    }
+
+    .password-strength {
+        height: 4px;
+        background: #e0e0e0;
+        border-radius: 2px;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: all 0.3s;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 576px) {
+        .register-card {
+            padding: 30px 25px;
+        }
+
+        .register-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- kayıt formunu ortalayan alan -->
+<div class="register-container">
+    <div class="register-card">
+        <!-- sayfa başlığı -->
+        <div class="register-header">
+            <div class="register-icon">
+                <i class="bi bi-person-plus"></i>
+            </div>
+            <h1 class="register-title">Hesap Oluştur</h1>
+            <p class="register-subtitle">Hemen üye ol, lezzet dolu dünyaya katıl!</p>
+        </div>
+
+        <!-- kayıt formu -->
+        <form method="post" action="">
+            {% csrf_token %}
+
+            {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+            {% endif %}
+
+
+            <!-- Ad Soyad -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="firstName" class="form-label">
+                        <i class="bi bi-person"></i> Ad
+                    </label>
+                    <input type="text" class="form-control" id="firstName" name="first_name" placeholder="Adınız"
+                        required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="lastName" class="form-label">
+                        <i class="bi bi-person"></i> Soyad
+                    </label>
+                    <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Soyadınız"
+                        required>
+                </div>
+            </div>
+
+            <!-- E-posta -->
+            <div class="mb-3">
+                <label for="email" class="form-label">
+                    <i class="bi bi-envelope"></i> E-posta
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-at"></i>
+                    </span>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="ornek@email.com"
+                        required>
+                </div>
+                <div class="form-text">Siparişlerinizle ilgili bilgileri bu adrese göndereceğiz.</div>
+            </div>
+
+            <!-- Telefon -->
+            <div class="mb-3">
+                <label for="phone" class="form-label">
+                    <i class="bi bi-phone"></i> Telefon
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-telephone"></i>
+                    </span>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="0555 555 55 55"
+                        pattern="[0-9]{10,11}" required>
+                </div>
+                <div class="form-text">Başında 0 olmadan 10 haneli numaranızı girin.</div>
+            </div>
+
+            <!-- Şifre -->
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock"></i> Şifre
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-key"></i>
+                    </span>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="••••••••"
+                        minlength="6" required>
+                </div>
+                <div class="form-text">En az 6 karakter olmalıdır.</div>
+            </div>
+
+            <!-- Şifre Tekrar -->
+            <div class="mb-3">
+                <label for="passwordConfirm" class="form-label">
+                    <i class="bi bi-lock-fill"></i> Şifre Tekrar
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-shield-check"></i>
+                    </span>
+                    <input type="password" class="form-control" id="passwordConfirm" name="password_confirm"
+                        placeholder="••••••••" minlength="6" required>
+                </div>
+            </div>
+
+            <!-- Adres -->
+            <div class="mb-3">
+                <label for="address" class="form-label">
+                    <i class="bi bi-geo-alt"></i> Adres
+                </label>
+                <textarea class="form-control" id="address" name="address" rows="3"
+                    placeholder="Mahalle, sokak, bina no, daire no" required></textarea>
+                <div class="form-text">Siparişlerinizin teslim edileceği adres bilgisi.</div>
+            </div>
+
+            <!-- Şehir & İlçe -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">
+                        <i class="bi bi-building"></i> Şehir
+                    </label>
+                    <select class="form-select" id="city" name="city" required>
+                        <option value="" selected disabled>Şehir seçin</option>
+                        <option>Adana</option>
+                        <option>Adıyaman</option>
+                        <option>Afyonkarahisar</option>
+                        <option>Ağrı</option>
+                        <option>Amasya</option>
+                        <option>Ankara</option>
+                        <option>Antalya</option>
+                        <option>Artvin</option>
+                        <option>Aydın</option>
+                        <option>Balıkesir</option>
+                        <option>Bilecik</option>
+                        <option>Bingöl</option>
+                        <option>Bitlis</option>
+                        <option>Bolu</option>
+                        <option>Burdur</option>
+                        <option>Bursa</option>
+                        <option>Çanakkale</option>
+                        <option>Çankırı</option>
+                        <option>Çorum</option>
+                        <option>Denizli</option>
+                        <option>Diyarbakır</option>
+                        <option>Edirne</option>
+                        <option>Elazığ</option>
+                        <option>Erzincan</option>
+                        <option>Erzurum</option>
+                        <option>Eskişehir</option>
+                        <option>Gaziantep</option>
+                        <option>Giresun</option>
+                        <option>Gümüşhane</option>
+                        <option>Hakkari</option>
+                        <option>Hatay</option>
+                        <option>Isparta</option>
+                        <option>Mersin</option>
+                        <option>İstanbul</option>
+                        <option>İzmir</option>
+                        <option>Kars</option>
+                        <option>Kastamonu</option>
+                        <option>Kayseri</option>
+                        <option>Kırklareli</option>
+                        <option>Kırşehir</option>
+                        <option>Kocaeli</option>
+                        <option>Konya</option>
+                        <option>Kütahya</option>
+                        <option>Malatya</option>
+                        <option>Manisa</option>
+                        <option>Kahramanmaraş</option>
+                        <option>Mardin</option>
+                        <option>Muğla</option>
+                        <option>Muş</option>
+                        <option>Nevşehir</option>
+                        <option>Niğde</option>
+                        <option>Ordu</option>
+                        <option>Rize</option>
+                        <option>Sakarya</option>
+                        <option>Samsun</option>
+                        <option>Siirt</option>
+                        <option>Sinop</option>
+                        <option>Sivas</option>
+                        <option>Tekirdağ</option>
+                        <option>Tokat</option>
+                        <option>Trabzon</option>
+                        <option>Tunceli</option>
+                        <option>Şanlıurfa</option>
+                        <option>Uşak</option>
+                        <option>Van</option>
+                        <option>Yozgat</option>
+                        <option>Zonguldak</option>
+                        <option>Aksaray</option>
+                        <option>Bayburt</option>
+                        <option>Karaman</option>
+                        <option>Kırıkkale</option>
+                        <option>Batman</option>
+                        <option>Şırnak</option>
+                        <option>Bartın</option>
+                        <option>Ardahan</option>
+                        <option>Iğdır</option>
+                        <option>Yalova</option>
+                        <option>Karabük</option>
+                        <option>Kilis</option>
+                        <option>Osmaniye</option>
+                        <option>Düzce</option>
+                    </select>
+
+
+
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="district" class="form-label">
+                        <i class="bi bi-signpost"></i> İlçe
+                    </label>
+                    <input type="text" class="form-control" id="district" name="district" placeholder="İlçe" required>
+                </div>
+            </div>
+
+            <!-- kayıt işlemi -->
+            <button type="submit" class="btn btn-register">
+                <i class="bi bi-check-circle"></i> Kayıt Ol
+            </button>
+        </form>
+
+        <!-- zaten hesabı olanlar için -->
+        <div class="login-link">
+            <p>
+                Zaten hesabın var mı?
+                <a href="{% url 'login' %}">Giriş yap</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // şifre tekrar kontrolü
+    document.getElementById('passwordConfirm').addEventListener('input', function () {
+        const password = document.getElementById('password').value;
+        const confirm = this.value;
+
+        if (password !== confirm) {
+            this.setCustomValidity('Şifreler eşleşmiyor!');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // telefon alanında sadece rakam kalsın
+    document.getElementById('phone').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.startsWith('0')) {
+            value = value.substring(1);
+        }
+        e.target.value = value;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% block title %}{{ restaurant.RestoranAdi }} - Menü{% endblock %}
+
+{% block extra_css %}
+<!-- restoran menü sayfasına özel stiller -->
+<style>
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #666;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #ff6b6b;
+    }
+
+    .restaurant-header {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .restaurant-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .restaurant-desc {
+        color: #666;
+        font-size: 1.05rem;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .restaurant-info {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+
+    .info-badge {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .category-section {
+        margin-bottom: 40px;
+    }
+
+    .category-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #ff6b6b;
+        display: inline-block;
+    }
+
+    .menu-item-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        transition: box-shadow 0.2s;
+    }
+
+    .menu-item-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+    }
+
+    .item-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .item-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #ff6b6b;
+        white-space: nowrap;
+        margin-left: 15px;
+    }
+
+    .item-description {
+        color: #777;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-top: 8px;
+    }
+
+    .empty-menu {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        color: #999;
+    }
+
+    .empty-menu i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .restaurant-title {
+            font-size: 1.6rem;
+        }
+
+        .restaurant-header {
+            padding: 20px;
+        }
+
+        .restaurant-info {
+            flex-direction: column;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .menu-item-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item-price {
+            margin-left: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ana sayfaya geri dönmek için -->
+<a href="{% url 'home' %}" class="back-link">
+    <i class="bi bi-arrow-left"></i> Ana sayfa
+</a>
+
+<!-- restoran temel bilgileri -->
+<div class="restaurant-header">
+    <h1 class="restaurant-title">{{ restaurant.RestoranAdi }}</h1>
+    <p class="restaurant-desc">{{ restaurant.Aciklama }}</p>
+
+    <!-- minimum sipariş tutarı -->
+    <div class="restaurant-info">
+        {% if restaurant.MinTutar %}
+        <div class="info-badge">
+            <i class="bi bi-wallet2"></i>
+            Minimum Tutar: {{ restaurant.MinTutar }} ₺
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- menü listesi -->
+{% if menu_items %}
+{% regroup menu_items by KategoriAdi as kategoriler %}
+
+{% for kategori in kategoriler %}
+<div class="category-section">
+    <!-- kategori başlığı -->
+    <h2 class="category-title">
+        <i class="bi bi-tag-fill"></i> {{ kategori.grouper }}
+    </h2>
+
+    <div class="row">
+        {% for yemek in kategori.list %}
+        <div class="col-lg-6">
+            <div class="menu-item-card d-flex flex-column justify-content-between h-100">
+
+                <div>
+                    <!-- yemek adı ve fiyat -->
+                    <div class="menu-item-header">
+                        <h3 class="item-name">{{ yemek.YemekAdi }}</h3>
+                        <div class="item-price">{{ yemek.Fiyat }} ₺</div>
+                    </div>
+
+                    <!-- yemek içeriği -->
+                    {% if yemek.Icerik %}
+                    <p class="item-description">{{ yemek.Icerik }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- adet seçimi ve sepete ekleme -->
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+
+                    <!-- adet azalt -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                        onclick="adetAzalt('{{ yemek.YemekID }}')">−</button>
+
+                    <!-- seçilen adet -->
+                    <span id="adet-{{ yemek.YemekID }}" class="fw-bold">
+                        {{ adet|default:1 }}
+                    </span>
+
+                    <!-- adet artır -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                        onclick="adetArtir('{{ yemek.YemekID }}')">+</button>
+
+                    <!-- sepete ekleme formu -->
+                    <form method="post" action="{% url 'sepete_ekle' %}" class="ms-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="yemek_id" value="{{ yemek.YemekID }}">
+                        <input type="hidden" name="adet" id="input-{{ yemek.YemekID }}" value="1">
+                        <button class="btn btn-sm btn-warning">
+                            Sepete Ekle
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+{% else %}
+<!-- menüde ürün yoksa -->
+<div class="empty-menu">
+    <i class="bi bi-basket"></i>
+    <h3>Menüde henüz ürün bulunmuyor</h3>
+    <p>Bu restoran yakında yemeklerini ekleyecek!</p>
+</div>
+{% endif %}
+
+<!-- adet artır / azalt işlemleri -->
+<script>
+    function adetArtir(id) {
+        let adetSpan = document.getElementById("adet-" + id);
+        let input = document.getElementById("input-" + id);
+
+        let adet = parseInt(adetSpan.innerText);
+        adet++;
+
+        adetSpan.innerText = adet;
+        input.value = adet;
+    }
+
+    function adetAzalt(id) {
+        let adetSpan = document.getElementById("adet-" + id);
+        let input = document.getElementById("input-" + id);
+
+        let adet = parseInt(adetSpan.innerText);
+        if (adet > 1) {
+            adet--;
+            adetSpan.innerText = adet;
+            input.value = adet;
+        }
+    }
+</script>
+
+
+{% endblock %}

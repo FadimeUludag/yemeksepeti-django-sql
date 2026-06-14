@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Panel - YemekSepeti{% endblock %}
+
+{% block extra_css %}
+<!-- Admin paneline özel stiller -->
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 30px 0;
+        margin-bottom: 40px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .admin-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 5px 0 0;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+    .section-header {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        padding: 20px 25px;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: #3498db;
+    }
+
+    .section-body {
+        padding: 25px;
+    }
+
+    .form-section {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .form-section-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+        padding-left: 10px;
+        border-left: 3px solid #3498db;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+    }
+
+    .btn-admin {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s;
+    }
+
+    .btn-admin-primary {
+        background: #3498db;
+        color: white;
+    }
+
+    .btn-admin-primary:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-admin-success {
+        background: #27ae60;
+        color: white;
+    }
+
+    .btn-admin-success:hover {
+        background: #229954;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-admin-danger {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-admin-danger:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-admin-warning {
+        background: #f39c12;
+        color: white;
+    }
+
+    .btn-admin-warning:hover {
+        background: #d68910;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+    }
+
+    .alert-info-custom {
+        background: #e8f4fd;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .alert-info-custom i {
+        color: #3498db;
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Admin paneli üst başlık alanı -->
+<div class="admin-header">
+    <div class="container">
+        <h1 class="admin-title">
+            <i class="bi bi-shield-lock"></i> Admin Yönetim Paneli
+        </h1>
+        <p class="admin-subtitle">Sistem yönetimi ve kontrol merkezi</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- KULLANICI YÖNETİMİ -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-people"></i> Kullanıcı Yönetimi
+            </h2>
+        </div>
+        <div class="section-body">
+
+            <div class="alert-info-custom">
+                <i class="bi bi-info-circle-fill"></i>
+                Kullanıcıların rol ve aktiflik durumlarını buradan yönetebilirsiniz.
+            </div>
+
+
+            <!-- kullanıcı listesi -->
+            <div class="form-section">
+                <h3 class="form-section-title">Mevcut Kullanıcılar</h3>
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ad Soyad</th>
+                            <th>E-posta</th>
+                            <th>Rol Değiştir</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for k in kullanicilar %}
+                        <tr>
+                            <td>{{ k.id }}</td>
+                            <td>{{ k.ad }}</td>
+                            <td>{{ k.eposta }}</td>
+
+                            <!--rol değiştir-->
+                            <td>
+                                {% if k.is_admin %}
+                                <span class="text-muted">Admin</span>
+                                {% else %}
+                                <form method="post" class="d-flex gap-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="rol_degistir">
+                                    <input type="hidden" name="kullanici_id" value="{{ k.id }}">
+
+                                    <select name="rol" class="form-select form-select-sm">
+                                        <option value="3" {% if k.is_musteri %}selected{% endif %}>
+                                            Müşteri
+                                        </option>
+                                        <option value="2" {% if k.is_firma %}selected{% endif %}>
+                                            Firma
+                                        </option>
+                                    </select>
+
+                                    <button class="btn btn-warning btn-sm">Kaydet</button>
+                                </form>
+                                {% endif %}
+                            </td>
+
+                            <!--kullanıcının aktiflik pasiflik durumu-->
+                            <td>
+                                {% if k.is_admin %}
+                                <span class="badge bg-success">Aktif</span>
+                                {% else %}
+                                {% if k.aktif %}
+                                <span class="badge bg-success">Aktif</span>
+                                {% else %}
+                                <span class="badge bg-danger">Pasif</span>
+                                {% endif %}
+
+                                <!--Kullanıcının aktiflik pasiflik durumunu değiştirebilmek için-->
+                                <form method="post" class="mt-1">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="kullanici_toggle">
+                                    <input type="hidden" name="kullanici_id" value="{{ k.id }}">
+                                    <input type="hidden" name="aktif" value="{{ k.aktif }}">
+
+                                    <button
+                                        class="btn btn-sm {% if k.aktif %}btn-danger{% else %}btn-success{% endif %}">
+                                        {% if k.aktif %}Pasif Yap{% else %}Aktif Yap{% endif %}
+                                    </button>
+
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- RESTORAN YÖNETİMİ-->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="bi bi-shop"></i> Restoran Yönetimi
+                    </h2>
+                </div>
+                <div class="section-body">
+                    <div class="alert-info-custom">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Yeni restoran ekleyebilir veya mevcut restoranları silebilirsiniz.
+                    </div>
+
+                    <!-- Restoran ekleme -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Yeni Restoran Ekle</h3>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="restoran_ekle">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="restoranAd" class="form-label">
+                                        <i class="bi bi-shop-window"></i> Restoran Adı *
+                                    </label>
+                                    <input type="text" class="form-control" id="restoranAd" name="restoran_adi"
+                                        placeholder="Örn: Lezzet Durağı" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="minTutar" class="form-label">
+                                        <i class="bi bi-wallet2"></i> Minimum Tutar (₺) *
+                                    </label>
+                                    <input type="number" class="form-control" id="minTutar" name="min_tutar"
+                                        placeholder="Örn: 50" step="0.01" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="sahipID" class="form-label">
+                                        <i class="bi bi-person-badge"></i> Sahip ID *
+                                    </label>
+                                    <input type="number" class="form-control" id="sahipID" name="sahip_id"
+                                        placeholder="Örn: 456" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="aciklama" class="form-label">
+                                    <i class="bi bi-file-text"></i> Açıklama *
+                                </label>
+                                <textarea class="form-control" id="aciklama" name="aciklama" rows="3"
+                                    placeholder="Restoran hakkında kısa açıklama..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-admin btn-admin-success">
+                                <i class="bi bi-plus-circle"></i> Restoran Ekle
+                            </button>
+                        </form>
+                    </div>
+
+                    <!--restoran listesi-->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Mevcut Restoranlar</h3>
+
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Restoran Adı</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--Restoranın aktiflik pasiflik durumu-->
+                                {% for r in restoranlar %}
+                                <tr>
+                                    <td>{{ r.0 }}</td>
+                                    <td>{{ r.1 }}</td>
+                                    <td>
+                                        {% if r.2 %}
+                                        <span class="badge bg-success">Aktif</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Pasif</span>
+                                        {% endif %}
+
+                                        <!-- restoranın aktiflik pasiflik durumu değiştirebilmek için -->
+                                        <form method="post" class="mt-1 d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="restoran_toggle">
+                                            <input type="hidden" name="restoran_id" value="{{ r.0 }}">
+                                            <input type="hidden" name="aktif" value="{{ r.2 }}">
+
+                                            <button
+                                                class="btn btn-sm {% if r.2 %}btn-danger{% else %}btn-success{% endif %}">
+                                                {% if r.2 %}Pasif Yap{% else %}Aktif Yap{% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- KATEGORİ YÖNETİMİ -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="bi bi-tags"></i> Kategori Yönetimi
+                    </h2>
+                </div>
+
+                <div class="section-body">
+
+                    <!-- Yeni kategori ekleme -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Yeni Kategori Ekle</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="kategori_ekle">
+                            <input class="form-control mb-2" name="kategori_adi" placeholder="Kategori adı" required>
+                            <button class="btn btn-primary">Kategori Ekle</button>
+                        </form>
+                    </div>
+
+                    <!-- Mevcut kategorilerin listesi -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Mevcut Kategoriler</h3>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Kategori</th>
+                                    <th>Aktif</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--Kategrilerin aktiflik pasiflik durumu-->
+                                {% for k in kategoriler %}
+                                <tr>
+                                    <td>{{ k.0 }}</td>
+                                    <td>{{ k.1 }}</td>
+                                    <td>
+                                        {% if k.2 %}
+                                        <span class="badge bg-success">Aktif</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Pasif</span>
+                                        {% endif %}
+                                        <!--Kategorileri aktif/ pasif yapmak için-->
+                                        <form method="post" class="mt-1 d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="kategori_toggle">
+                                            <input type="hidden" name="kategori_id" value="{{ k.0 }}">
+                                            <input type="hidden" name="aktif" value="{{ k.2 }}">
+
+                                            <button
+                                                class="btn btn-sm {% if k.2 %}btn-danger{% else %}btn-success{% endif %}">
+                                                {% if k.2 %}Pasif Yap{% else %}Aktif Et{% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endblock %}

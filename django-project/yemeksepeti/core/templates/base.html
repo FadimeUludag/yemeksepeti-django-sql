@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- sayfa başlığı alanı -->
+    <title>{% block title %}YemekSepeti{% endblock %}</title>
+
+    <!-- Bootstrap 5 temel stiller -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap ikonları -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Uygulamaya ait genel stiller -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #ff6b6b;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+        }
+
+        .search-box {
+            max-width: 500px;
+        }
+
+        .search-box input {
+            border-radius: 25px;
+            padding-left: 20px;
+        }
+
+        .btn-search {
+            border-radius: 25px;
+        }
+
+        .content-wrapper {
+            padding: 30px 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+            text-align: center;
+        }
+    </style>
+
+    <!-- Sayfaya özel ekstra CSS alanı -->
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navbar(üst menü) -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+
+            <!-- Admin kullanıcılar için admin panel butonu -->
+            {% if request.session.rol == 1 %}
+            <a href="{% url 'admin_panel' %}" class="btn btn-danger ms-2">
+                Admin Paneli
+            </a>
+            {% endif %}
+
+            <!-- Firma kullanıcılar için firma panel butonu -->
+            {% if request.session.rol == 2 %}
+            <a href="{% url 'firma_panel' %}" class="btn btn-success ms-2">
+                Firma Paneli
+            </a>
+            {% endif %}
+
+
+            <!-- Kullanıcı giriş durumuna göre logo yönlendirmesi -->
+            {% if request.session.kullanici_id %}
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-cart-check-fill"></i> YemekSepeti
+            </a>
+
+            {% else %}
+            <a class="navbar-brand" href="{% url 'login' %}">
+                <i class="bi bi-cart-check-fill"></i> YemekSepeti
+            </a>
+            {% endif %}
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if request.session.kullanici_id %}
+                <!--arama kutusu-->
+                <form class="d-flex ms-3" method="get" action="{% url 'arama' %}">
+                    <input class="form-control me-2" type="search" name="q"
+                        placeholder="Yemek, kategori veya restoran ara" aria-label="Ara">
+                    <button class="btn btn-light btn-search" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+                {% endif %}
+
+                <ul class="navbar-nav ms-auto">
+
+                    {% if request.session.kullanici_id %}
+                    <!-- Ana sayfa linki -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="bi bi-house-door"></i> Ana Sayfa
+                        </a>
+                    </li>
+
+                    <!-- Sepet linki ve ürün sayısı -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sepet' %}">
+                            <i class="bi bi-cart3"></i> Sepetim
+                            {% if request.session.sepet %}
+                            <span class="badge bg-dark">
+                                {{ request.session.sepet.urunler|length }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    <!-- Siparişlerim sayfası -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'siparislerim' %}">
+                            <i class="bi bi-receipt"></i> Siparişlerim
+                        </a>
+                    </li>
+
+                    <!-- Giriş yapan kullanıcının adı -->
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <i class="bi bi-person-circle"></i> {{ request.session.adsoyad }}
+                        </span>
+                    </li>
+
+                    <!-- Çıkış işlemi -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Çıkış
+                        </a>
+                    </li>
+
+                    {% else %}
+
+                    <!-- Giriş yapmamış kullanıcılar için giriş linki -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Giriş
+                        </a>
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sistem mesajlarının gösterildiği alan -->
+    <div class="container mt-3">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert 
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% elif message.tags == 'success' %}
+                    alert-success
+                {% elif message.tags == 'warning' %}
+                    alert-warning
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show shadow-sm" role="alert">
+
+            <div class="d-flex align-items-center">
+                {% if message.tags == 'error' %}
+                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                {% elif message.tags == 'success' %}
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {% endif %}
+                <div>{{ message }}</div>
+            </div>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+
+    <!-- Sayfa içeriği -->
+    <div class="content-wrapper">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!--alt bilgi alanı-->
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2025 YemekSepeti - Öğrenci Projesi</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Sayfaya özel ekstra JS alanı -->
+    {% block extra_js %}{% endblock %}
+
+</body>
+
+</html>

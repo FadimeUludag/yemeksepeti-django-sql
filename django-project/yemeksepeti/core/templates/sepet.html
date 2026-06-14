@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sepetim{% endblock %}
+
+{% block content %}
+<div class="row g-4 mt-3">
+
+    <!--sepet içeriği -->
+    <div class="col-lg-8">
+
+        <!-- restoran bilgisi -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body d-flex align-items-center gap-3">
+
+                <!-- restoran görseli -->
+                <div style="width:56px;height:56px; border-radius:12px; overflow:hidden; background:#f3f3f3;"
+                    class="d-flex align-items-center justify-content-center">
+                    {% if restoran_image %}
+                    <img src="/static/images/{{ restoran_image }}" alt="{{ restoran_adi }}"
+                        style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                    <i class="bi bi-shop fs-3 text-muted"></i>
+                    {% endif %}
+                </div>
+
+                <!-- restoran adı -->
+                <div class="flex-grow-1">
+                    <div class="fw-bold fs-5">
+                        {{ restoran_adi|default:"Restoran" }}
+                    </div>
+
+                    <div class="text-muted small">
+                        Siparişiniz bu restorandan hazırlanacak
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- sepetteki ürünler -->
+        {% for u in urunler %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-body d-flex align-items-center">
+
+                <!-- ürün bilgisi -->
+                <div class="me-3">
+                    <div class="fw-semibold">{{ u.YemekAdi }}</div>
+                    <div class="text-muted small">{{ u.BirimFiyat }} ₺</div>
+                </div>
+
+                <!-- adet ve fiyat işlemleri -->
+                <div class="ms-auto d-flex align-items-center gap-2">
+
+                    <!-- adet azalt -->
+                    <form method="post" action="{% url 'sepet_azalt' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="yemek_id" value="{{ u.YemekID }}">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">−</button>
+                    </form>
+
+                    <!-- mevcut adet -->
+                    <div class="fw-bold" style="min-width:22px; text-align:center;">
+                        {{ u.Adet }}
+                    </div>
+
+                    <!--adet artır -->
+                    <form method="post" action="{% url 'sepet_artir' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="yemek_id" value="{{ u.YemekID }}">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">+</button>
+                    </form>
+
+                    <!-- ara toplam -->
+                    <div class="ms-4 fw-bold">
+                        {{ u.AraToplam }} ₺
+                    </div>
+
+                    <!-- ürünü sepetten sil -->
+                    <form method="post" action="{% url 'sepet_sil' %}" class="ms-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="yemek_id" value="{{ u.YemekID }}">
+                        <button class="btn btn-sm btn-outline-danger" type="submit" title="Sil">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <!-- sepet boşsa -->
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-muted py-5">
+                Sepet boş.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- sipariş özeti -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 90px;">
+            <div class="card-body">
+
+                <!-- özet başlığı -->
+                <div class="fw-bold fs-5 mb-3">Sipariş Özeti</div>
+
+                <!-- ara toplam -->
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="text-muted">Ara Toplam</div>
+                    <div>{{ toplam }} ₺</div>
+                </div>
+
+                <!-- kargo bilgisi -->
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="text-muted">Kargo</div>
+                    <div class="text-success">Ücretsiz</div>
+                </div>
+
+                <hr>
+
+                <!-- genel toplam -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="fw-bold fs-5">Toplam</div>
+                    <div class="fw-bold fs-5 text-danger">{{ toplam }} ₺</div>
+                </div>
+
+                <!-- minimum tutar kontrolü -->
+                {% if min_tutar and toplam < min_tutar %} <div
+                    class="alert alert-warning py-2 px-3 mb-3 small shadow-sm">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Minimum sipariş tutarı <b>{{ min_tutar }} ₺</b>. <br>
+                    Sepete biraz daha ürün eklemelisiniz.
+            </div>
+
+            <!-- sipariş verilemez -->
+            <button class="btn btn-warning w-100 fw-bold" disabled style="opacity: 0.6; cursor: not-allowed;">
+                Siparişi Onayla
+            </button>
+            {% else %}
+            <!-- sipariş oluştur -->
+            <form method="post" action="{% url 'siparis_ver' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning w-100 fw-bold shadow-sm">
+                    Siparişi Onayla
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

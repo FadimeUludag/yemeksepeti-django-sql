@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ restoran_adi }} - Yorumlar{% endblock %}
+
+{% block content %}
+<!-- restoran adı -->
+<h3 class="mb-3">{{ restoran_adi }}</h3>
+
+<!-- restoranın ortalama puanı ve toplam yorum sayısı -->
+<div class="mb-4">
+    <span class="badge bg-warning text-dark fs-6">
+        ⭐ {{ ortalama_puan }}
+    </span>
+    <span class="text-muted ms-2">
+        {{ yorum_sayisi }} yorum
+    </span>
+</div>
+
+<!-- yorumların listelendiği tablo -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-bordered m-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Kullanıcı</th>
+                    <th>Yorum</th>
+                    <th>Puan</th>
+                    <th>Tarih</th>
+                    <th></th><!-- silme işlemi için -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for y in yorumlar %}
+                <tr>
+                    <!-- yorumu yapan kullanıcı -->
+                    <td>{{ y.2 }}</td>
+
+                    <!-- yorum metni -->
+                    <td>{{ y.3 }}</td>
+
+                    <!-- verilen puan -->
+                    <td>{{ y.4 }} ⭐</td>
+
+                    <!-- yorum tarihi -->
+                    <td>{{ y.5|date:"d F Y H:i" }}</td>
+
+                    <!-- sadece yorumu yazan kullanıcı silebilir -->
+                    <td>
+                        {% if aktif_kullanici == y.1 %}
+                        <a href="{% url 'yorum_sil' y.0 %}" class="btn btn-sm btn-outline-danger px-3"
+                            onclick="return confirm('Yorumu silmek istediğinize emin misiniz?')">
+                            Sil
+                        </a>
+                        {% else %}
+                        <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <!-- hiç yorum yoksa -->
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        Henüz yorum yapılmamış.
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

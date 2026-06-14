@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Firma Paneli - YemekSepeti{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- firma paneli başlığı -->
+    <h2 class="mb-4">
+        <i class="bi bi-shop"></i> Firma Paneli
+    </h2>
+
+    <!--firmaya ait restoranlar-->
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">
+            <strong>Restoranlarım</strong>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Restoran Adı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in restoranlar %}
+                    <tr>
+                        <td>{{ r.0 }}</td>
+                        <td>{{ r.1 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            Henüz restoranınız yok.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--müşterilerin yaptığı yorumlar ve puanlar-->
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <strong>Müşteri Yorumları ve Puanlar</strong>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Restoran</th>
+                        <th>Yorum</th>
+                        <th>Puan</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for y in yorumlar %}
+                    <tr>
+                        <td>{{ y.1 }}</td>
+                        <td>{{ y.2 }}</td>
+                        <td>{{ y.3 }} ⭐</td>
+
+                        <!-- yorum aktif/pasif durumu -->
+                        <td>
+                            {% if y.4 == 1 %}
+                            <span class="badge bg-success">Aktif</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Pasif</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- yorumu aktif veya pasif yapma -->
+                        <td>
+                            {% if y.4 == 1 %}
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="yorum_pasif">
+                                <input type="hidden" name="yorum_id" value="{{ y.0 }}">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    Pasif Yap
+                                </button>
+                            </form>
+                            {% else %}
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="yorum_aktif">
+                                <input type="hidden" name="yorum_id" value="{{ y.0 }}">
+                                <button class="btn btn-sm btn-outline-success">
+                                    Aktif Et
+                                </button>
+                            </form>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            Henüz yorum yok.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- firmaya gelen siparişler -->
+    <div class="card mt-5">
+        <div class="card-header bg-warning text-dark">
+            <strong>Gelen Siparişler</strong>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sipariş ID</th>
+                        <th>Restoran</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in siparisler %}
+                    <tr>
+                        <td>{{ s.0 }}</td>
+                        <td>{{ s.1 }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ s.2 }}</span>
+                        </td>
+                        <td>
+                            {% if s.2 == "İptal" %}
+                            <span class="text-muted">—</span>
+
+                            {% elif s.2 == "Teslim Edildi" %}
+                            <span class="badge bg-success">Teslim Edildi</span>
+
+                            {% else %}
+
+                            <!--sipariş durumu güncelleme-->
+
+                            <!-- yolda -->
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="siparis_onayla">
+                                <input type="hidden" name="siparis_id" value="{{ s.0 }}">
+                                <button class="btn btn-sm btn-primary">
+                                    Yolda
+                                </button>
+                            </form>
+
+                            <!-- teslim edildi -->
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="siparis_teslim">
+                                <input type="hidden" name="siparis_id" value="{{ s.0 }}">
+                                <button class="btn btn-sm btn-success">
+                                    Teslim Edildi
+                                </button>
+                            </form>
+
+                            <!-- iptal -->
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="siparis_iptal">
+                                <input type="hidden" name="siparis_id" value="{{ s.0 }}">
+                                <button class="btn btn-sm btn-danger">
+                                    İptal
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            Henüz sipariş yok.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
